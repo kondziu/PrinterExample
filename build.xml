@@ -2,7 +2,7 @@
 <project name="printerexample" default="all">
   
   
-  <property file="printerexample.properties"/>
+  <property file="build.properties"/>
   <!-- Uncomment the following property if no tests compilation is needed -->
   <!-- 
   <property name="skip.tests" value="true"/>
@@ -138,20 +138,6 @@
   
   
   <!-- Global Libraries -->
-  <!-- Register Custom Compiler Taskdefs -->
-  <property name="javac2.home" value="${idea.home}/lib"/>
-  <path id="javac2.classpath">
-    <fileset dir="${javac2.home}">
-      <include name="javac2.jar"/>
-      <include name="jdom.jar"/>
-      <include name="asm-all*.jar"/>
-      <include name="forms-*.jar"/>
-    </fileset>
-  </path>
-  <target name="register.custom.compilers">
-    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
-    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
-  </target>
   
   <!-- Modules -->
   
@@ -214,15 +200,15 @@
   
   <target name="compile.module.printerexample" depends="compile.module.printerexample.production,compile.module.printerexample.tests" description="Compile module PrinterExample"/>
   
-  <target name="compile.module.printerexample.production" depends="register.custom.compilers" description="Compile module PrinterExample; production classes">
+  <target name="compile.module.printerexample.production" description="Compile module PrinterExample; production classes">
     <mkdir dir="${printerexample.output.dir}"/>
-    <javac2 destdir="${printerexample.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.printerexample}/javac">
+    <javac destdir="${printerexample.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.printerexample}/javac">
       <compilerarg line="${compiler.args.printerexample}"/>
       <bootclasspath refid="printerexample.module.bootclasspath"/>
       <classpath refid="printerexample.module.production.classpath"/>
       <src refid="printerexample.module.sourcepath"/>
       <patternset refid="excluded.from.compilation.printerexample"/>
-    </javac2>
+    </javac>
     
     <copy todir="${printerexample.output.dir}">
       <fileset dir="${module.printerexample.basedir}/src">
@@ -232,7 +218,7 @@
     </copy>
   </target>
   
-  <target name="compile.module.printerexample.tests" depends="register.custom.compilers,compile.module.printerexample.production" description="compile module PrinterExample; test classes" unless="skip.tests"/>
+  <target name="compile.module.printerexample.tests" depends="compile.module.printerexample.production" description="compile module PrinterExample; test classes" unless="skip.tests"/>
   
   <target name="clean.module.printerexample" description="cleanup module">
     <delete dir="${printerexample.output.dir}"/>
